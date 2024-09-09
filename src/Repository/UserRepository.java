@@ -21,43 +21,63 @@ public class UserRepository implements RepositoryInterface<User> {
 
     @Override
     public Optional<User> create(User user) {
-        String query = "INSERT INTO users (name,age) VALUES (?,?)";
-        try(PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1,user.getName());
-            statement.setInt(2,user.getAge());
+        String query = "INSERT INTO users (name, age) VALUES (?, ?) RETURNING id, name, age";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, user.getName());
+            statement.setInt(2, user.getAge());
+
             ResultSet resultSet = statement.executeQuery();
 
-            return Optional.of(user);
+            if (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                user.setId(id);
+                return Optional.of(user);
+            }
+
+            return Optional.empty();
+
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
+            return Optional.empty();
         }
-
     }
 
     @Override
     public Optional<User> update(User user) {
-        String sql = "UPDATE users SET name = ?, age = ? WHERE id = ? RETURNING *";
-       try ( PreparedStatement statement = connection.prepareStatement(sql)){
-           statement.setString(1,user.getName());
-           statement.setInt(2,user.getAge());
-           statement.setInt(3,user.getId());
-           ResultSet resultSet = statement.executeQuery();
-           if (resultSet.next()) {
-               return Optional.of(new User(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getInt("age")));
-           }
+        String sql = "UPDATE users SET name = ?, age = ? WHERE id = ? RETURNING id, name, age";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, user.getName());
+            statement.setInt(2, user.getAge());
+            statement.setInt(3, user.getId());
 
-       }
-       catch (SQLException e) {
-           e.printStackTrace();
-       }
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(new User(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getInt("age")));
+            }
 
-        return null;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return Optional.empty();
     }
 
     @Override
     public Optional<User> findById(int id) {
-        return null;
+        String query = "SELECT * FROM users WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return Optional.of(new User(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getInt("age")));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -65,26 +85,29 @@ public class UserRepository implements RepositoryInterface<User> {
         String query = "SELECT * FROM users";
         List<User> userList = new ArrayList<>();
 
-        try (PreparedStatement preparedStatement= connection.prepareStatement(query);
-             ResultSet resultSet =preparedStatement.executeQuery()) {
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
-                int id =resultSet.getInt("id");
-                String name =resultSet.getString("name");
-                int age= resultSet.getInt("age");
-
-                User user = new User(id, name, age);
+                User user = new User(resultSet.getInt("id"), resultSet.getString("name"), resultSet.getInt("age"));
                 userList.add(user);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-
         return userList;
     }
 
     @Override
     public boolean delete(int id) {
-        return false;
+        String sql = "DELETE FROM users WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
