@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class UserRepository implements RepositoryInterface<User> {
 
-    private Connection connection;
+    private final Connection connection;
 
     public UserRepository(Connection connection) {
         this.connection = connection;

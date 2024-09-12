@@ -3,6 +3,7 @@ import Entity.User;
 import Repository.UserRepository;
 import Service.UserService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -116,6 +117,32 @@ public class Main {
                         System.out.println("User with ID " + idToFind + " not found.");
                     }
                     break;
+
+                case 6:
+                    System.out.println("Enter user id :");
+                    id = scan.nextInt();
+                    scan.nextLine();
+                    System.out.println("Enter Quantity :");
+                    int qte = scan.nextInt();
+                    scan.nextLine();
+                    System.out.println("Enter start date (YYYY-MM-DD) :");
+                    LocalDate startDAte = LocalDate.parse(scan.nextLine());
+
+                    System.out.println("Enter end date (YYYY-MM-DD)");
+                    LocalDate endDAte = LocalDate.parse(scan.nextLine());
+
+                    System.out.println("Enter consumption type : \n 1. transport \n 2. Alimentation \n 3. Logement");
+                    int consomption = scan.nextInt();
+                    switch (consomption){
+                        case 1:
+                            System.out.println("Enter transport type :\n 1.voiture \n 2.train");
+                        case 2:
+                            System.out.println("Enter Alimentation type :\n 1.viande \n 2. Légume");
+                        case 3:
+                            System.out.println("Enter Logement type : \n 1.electricité \n 2.gaz");
+
+
+                    }
 
 
 
