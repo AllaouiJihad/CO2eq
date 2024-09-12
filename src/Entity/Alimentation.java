@@ -6,8 +6,8 @@ public class Alimentation extends Consommation{
     private Double poids;
     private  TypeAliment typeAliment;
 
-    public Alimentation(int value, LocalDate startDate, LocalDate endDate, Double poids, TypeAliment typeAliment) {
-        super(value, startDate, endDate);
+    public Alimentation(Double value, LocalDate startDate, LocalDate endDate, int typeConsommation, Double poids, TypeAliment typeAliment) {
+        super(value, startDate, endDate,  typeConsommation);
         this.poids = poids;
         this.typeAliment = typeAliment;
     }

@@ -8,8 +8,8 @@ public class Logement extends Consommation{
     private Double consommationEnergie;
 
 
-    public Logement(int value, LocalDate startDate, LocalDate endDate, TypeEnergie typeEnergie, Double consommationEnergie) {
-        super(value, startDate, endDate);
+    public Logement(Double value, LocalDate startDate, LocalDate endDate,  int typeConsommation, TypeEnergie typeEnergie, Double consommationEnergie) {
+        super(value, startDate, endDate,  typeConsommation);
         this.typeEnergie = typeEnergie;
         this.consommationEnergie = consommationEnergie;
     }

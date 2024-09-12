@@ -6,11 +6,17 @@ public class Transport extends Consommation{
     private double distance;
     private TypeVehicule typeVehicule;
 
-    public Transport(int value, LocalDate startDate, LocalDate endDate, double distance, TypeVehicule typeVehicule) {
-        super(value, startDate, endDate);
+    public Transport(Double value, LocalDate startDate, LocalDate endDate, int typeConsommation, double distance, TypeVehicule typeVehicule) {
+        super(value, startDate, endDate,  typeConsommation);
         this.distance = distance;
         this.typeVehicule = typeVehicule;
     }
+
+//    public Transport(Double value, LocalDate startDate, LocalDate endDate, double distance, TypeVehicule typeVehicule) {
+//        super(value, startDate, endDate);
+//        this.distance = distance;
+//        this.typeVehicule = typeVehicule;
+//    }
 
     public double getDistance() {
         return distance;

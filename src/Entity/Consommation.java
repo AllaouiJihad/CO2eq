@@ -3,7 +3,7 @@ package Entity;
 import java.time.LocalDate;
 
 public abstract class Consommation {
-    private int value;
+    private Double value;
     private LocalDate StartDate;
     private LocalDate EndDate;
     private User user;
@@ -25,18 +25,20 @@ public abstract class Consommation {
         this.typeConsommation = typeConsommation;
     }
 
-    public Consommation(int value, LocalDate startDate, LocalDate endDate) {
+    public Consommation(Double value, LocalDate startDate, LocalDate endDate,  int typeConsommation) {
         this.value = value;
         StartDate = startDate;
         EndDate = endDate;
+        this.typeConsommation = typeConsommation;
     }
+
     public abstract Double calculImpact();
 
-    public int getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 

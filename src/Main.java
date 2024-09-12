@@ -1,6 +1,8 @@
 import Config.DatabaseConnection;
-import Entity.User;
+import Entity.*;
+import Repository.ConsommationRepository;
 import Repository.UserRepository;
+import Service.ConsommationService;
 import Service.UserService;
 
 import java.time.LocalDate;
@@ -16,6 +18,8 @@ public class Main {
         int choix;
         UserRepository userRepository = new UserRepository(DatabaseConnection.getInstance().getConnection());
         UserService userService = new UserService(userRepository);
+        ConsommationRepository consommationRepository = new ConsommationRepository(DatabaseConnection.getInstance().getConnection());
+        ConsommationService consommationService = new ConsommationService(userService,consommationRepository);
         do {
             System.out.println("***************************************************");
             System.out.println("*        *** Bienvenue sur GreenPulse ***         *");
@@ -120,35 +124,73 @@ public class Main {
 
                 case 6:
                     System.out.println("Enter user id :");
-                    id = scan.nextInt();
+                    int userId = scan.nextInt();
                     scan.nextLine();
+
                     System.out.println("Enter Quantity :");
-                    int qte = scan.nextInt();
+                    double quantity = scan.nextDouble();
                     scan.nextLine();
+
                     System.out.println("Enter start date (YYYY-MM-DD) :");
-                    LocalDate startDAte = LocalDate.parse(scan.nextLine());
+                    LocalDate startDate = LocalDate.parse(scan.nextLine());
 
                     System.out.println("Enter end date (YYYY-MM-DD)");
-                    LocalDate endDAte = LocalDate.parse(scan.nextLine());
+                    LocalDate endDate = LocalDate.parse(scan.nextLine());
 
-                    System.out.println("Enter consumption type : \n 1. transport \n 2. Alimentation \n 3. Logement");
-                    int consomption = scan.nextInt();
-                    switch (consomption){
+                    System.out.println("Enter consumption type : \n 1. Transport \n 2. Alimentation \n 3. Logement");
+                    int consomptionType = scan.nextInt();
+                    scan.nextLine();
+
+                    Consommation consommation = null;
+
+                    switch (consomptionType) {
                         case 1:
-                            System.out.println("Enter transport type :\n 1.voiture \n 2.train");
+                            System.out.println("Enter transport type :\n 1. Voiture \n 2. Train");
+                            int transportType = scan.nextInt();
+                            scan.nextLine();
+                            System.out.println("Enter distance in km:");
+                            double distance = scan.nextDouble();
+                            consommation = new Transport(quantity, startDate, endDate,consomptionType, distance,
+                                    transportType == 1 ? TypeVehicule.VOITURE : TypeVehicule.TRAIN);
+                            break;
                         case 2:
-                            System.out.println("Enter Alimentation type :\n 1.viande \n 2. Légume");
+                            System.out.println("Enter Alimentation type :\n 1. Viande \n 2. Légume");
+                            int alimentationType = scan.nextInt();
+                            scan.nextLine();
+                            System.out.println("Enter poids :");
+                            Double poids = scan.nextDouble();
+                            consommation = new Alimentation(quantity, startDate, endDate,consomptionType,poids,
+                                    alimentationType == 1 ? TypeAliment.VIANDE : TypeAliment.LEGUME);
+                            break;
                         case 3:
-                            System.out.println("Enter Logement type : \n 1.electricité \n 2.gaz");
+                            System.out.println("Enter Logement type : \n 1. Électricité \n 2. Gaz");
+                            int logementType = scan.nextInt();
+                            scan.nextLine(); // Pour consommer le retour à la ligne
+                            System.out.println("Enter energy consumption:");
+                            double energyConsumption = scan.nextDouble();
+                            consommation = new Logement(quantity, startDate, endDate,consomptionType,
+                                    logementType == 1 ? TypeEnergie.ELECTRICITE : TypeEnergie.GAZ, energyConsumption);
+                            break;
+                        default:
+                            System.out.println("Invalid consumption type");
+                            return;
+                    }
 
-
+                    if (consommation != null) {
+                        Optional<Consommation> result = consommationService.addConsommation(consommation, userId);
+                        if (result.isPresent()) {
+                            System.out.println("Consommation added successfully");
+                        } else {
+                            System.out.println("Failed to add consommation");
+                        }
+                    }
                     }
 
 
 
 
 
-            }
+
 
 
         } while (choix != 0);
